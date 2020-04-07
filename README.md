@@ -1,6 +1,7 @@
 > skolk  [skål'k] substantiv ~et
 >
 > frånvaro från obligatorisk skolundervisning utan giltig anledning
+> 
 > äv. om annan frånvaro el. försummelse
 >
 > [Svensk Ordbok](https://svenska.se/so/?id=47195&pz=7)
@@ -19,3 +20,10 @@
 ```sh
 DISCORD_TOKEN="<token>" python3 voice_watcher.py
 ```
+
+## The output
+
+The file `statistics.json` contains a list of all users who have at some point
+been connected to any voice channel. `connected` contains the number of times the
+user was connected during a check and `total` the number of checks since the
+user was first checked. (Might change in the future.)
