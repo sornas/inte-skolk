@@ -15,15 +15,14 @@
    * apscheduler
    * discord.py
 
-## Running
+## Configuration
 
-```sh
-DISCORD_TOKEN="<token>" python3 voice_watcher.py
-```
+Configuration is done through a `config.json`. At the moment this is created and
+written to manually. Soon&#8482 (#8) the configuration will be interactive.
 
 ## The output
 
 The file `statistics.json` contains a list of all users who have at some point
 been connected to any voice channel. `connected` contains the number of times the
 user was connected during a check and `total` the number of checks since the
-user was first checked. (Might change in the future.)
+user was first checked. (Might change in the future, #3.)
