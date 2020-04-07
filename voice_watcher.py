@@ -18,15 +18,6 @@ def mark_connected(members):
         json.dump(data, f)
         f.truncate()
 
-def step_time():
-    with open("statistics.json", "r+") as f:
-        data = json.load(f)
-        for member in data["members"]:
-            data["members"][member]["total"] += 1
-        f.seek(0)
-        json.dump(data, f)
-        f.truncate()
-
 class VoiceWatcherClient(discord.Client):
     def read_config(self):
         with open("config.json", "r") as f:
@@ -34,16 +25,35 @@ class VoiceWatcherClient(discord.Client):
 
             self.token = config["token"]
             self.toggler_id = config["id"]["toggler"]
+            self.skolk_threshold = config["skolk_threshold"]
+
+    def step_time(self):
+        with open("statistics.json", "r+") as f:
+            data = json.load(f)
+            for member_id in data["members"]:
+                member = data["members"][member_id]
+                member["total"] += 1
+                if member["connected"] / member["total"] < self.threshold:
+                    print("{} ({}/{}, {.2f})is below the skolk threshold!".format(
+                        member_id,
+                        member["connected"],
+                        member["total"],
+                        member["connected"] / member["total"]))
+                    #TODO(gu) send message
+            f.seek(0)
+            json.dump(data, f)
+            f.truncate()
 
     async def on_ready(self):
         print("logged on as {}".format(self.user))
+
         def update_members():
             voice_members = []
             for member in self.get_all_members():
                 if member.voice and member.voice.channel:
                     voice_members.append(member)
             mark_connected(voice_members)
-            step_time()
+            self.step_time()
 
         scheduler = AsyncIOScheduler()
         scheduler.add_job(update_members, "cron", minute="*")
