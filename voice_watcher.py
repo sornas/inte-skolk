@@ -27,7 +27,15 @@ def step_time():
         json.dump(data, f)
         f.truncate()
 
-class MyClient(discord.Client):
+class VoiceWatcherClient(discord.Client):
+    def read_config(self):
+        with open("ids.json", "r") as f:
+            ids = json.load(f)
+            if "toggler" not in ids:
+                return False
+            self.toggler_id = ids["toggler"]
+        return True
+
     async def on_ready(self):
         print("logged on as {}".format(self.user))
         def update_members():
@@ -43,12 +51,21 @@ class MyClient(discord.Client):
         scheduler.start()
 
 if __name__ == "__main__":
+    client = VoiceWatcherClient()
+
     if not os.path.exists("statistics.json"):
         print("creating empty statistics.json")
         with open("statistics.json", "w") as f:
             json.dump({"members": {}}, f)
+    else:
+        print("found already existing statistics.json")
+    
+    if client.read_config():
+        print("config read")
+    else:
+        # only the best error messages (TODO)
+        print("error when reading config")
 
-    client = MyClient()
     client.run(os.environ["DISCORD_TOKEN"])
 
     try:
