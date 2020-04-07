@@ -29,12 +29,11 @@ def step_time():
 
 class VoiceWatcherClient(discord.Client):
     def read_config(self):
-        with open("ids.json", "r") as f:
-            ids = json.load(f)
-            if "toggler" not in ids:
-                return False
-            self.toggler_id = ids["toggler"]
-        return True
+        with open("config.json", "r") as f:
+            config = json.load(f)
+
+            self.token = config["token"]
+            self.toggler_id = config["id"]["toggler"]
 
     async def on_ready(self):
         print("logged on as {}".format(self.user))
@@ -60,13 +59,10 @@ if __name__ == "__main__":
     else:
         print("found already existing statistics.json")
     
-    if client.read_config():
-        print("config read")
-    else:
-        # only the best error messages (TODO)
-        print("error when reading config")
+    client.read_config()
+    print("config read")
 
-    client.run(os.environ["DISCORD_TOKEN"])
+    client.run(client.token)
 
     try:
         asyncio.get_event_loop().run_forever()
