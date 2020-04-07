@@ -6,6 +6,8 @@ import discord
 import json
 
 def mark_connected(members):
+    """Mark members as connected this minute."""
+
     with open("statistics.json", "r+") as f:
         data = json.load(f)
         for member in members:
@@ -20,6 +22,8 @@ def mark_connected(members):
 
 class VoiceWatcherClient(discord.Client):
     def read_config(self):
+        """Open and read config.json."""
+
         with open("config.json", "r") as f:
             config = json.load(f)
 
@@ -28,6 +32,8 @@ class VoiceWatcherClient(discord.Client):
             self.skolk_threshold = config["skolk_threshold"]
 
     def step_time(self):
+        """Progress time and check thresholds."""
+
         with open("statistics.json", "r+") as f:
             data = json.load(f)
             for member_id in data["members"]:
@@ -48,6 +54,8 @@ class VoiceWatcherClient(discord.Client):
         print("logged on as {}".format(self.user))
 
         def update_members():
+            """Update state"""
+
             voice_members = []
             for member in self.get_all_members():
                 if member.voice and member.voice.channel:
