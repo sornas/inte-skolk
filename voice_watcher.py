@@ -24,12 +24,25 @@ class VoiceWatcherClient(discord.Client):
     def read_config(self):
         """Open and read config.json."""
 
-        with open("config.json", "r") as f:
+        with open("config.json", "r+") as f:
             config = json.load(f)
+
+            if "token" not in config:
+                config["token"] = input("Bot token: ")
+            if "id" not in config:
+                config["id"] = {}
+            if "toggler" not in config["id"]:
+                config["id"]["toggler"] = input("ID of toggler-bot: ")
+            if "skolk_threshold" not in config:
+                config["skolk_threshold"] = float(input("Threshold [0.0 - 1.0]: "))
 
             self.token = config["token"]
             self.toggler_id = config["id"]["toggler"]
             self.skolk_threshold = config["skolk_threshold"]
+
+            f.seek(0)
+            json.dump(config, f)
+            f.truncate()
 
     def step_time(self):
         """Progress time and check thresholds."""
@@ -77,6 +90,12 @@ if __name__ == "__main__":
     else:
         print("found already existing statistics.json")
     
+    if not os.path.exists("config.json"):
+        print("creating empty config.json")
+        with open("config.json", "w") as f:
+            json.dump({}, f)
+    else:
+        print("found already existing config.json")
     client.read_config()
     print("config read")
 
